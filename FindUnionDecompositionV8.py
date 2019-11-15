@@ -209,20 +209,20 @@ def SplitClan(ClanList,node, NewNodes, NewClans):
 					ToSplit.append(auxclan)
 					#print 'Dictionary values ', SplitD.values()
 		
-				for i in SplitD.values():
-					#print 'Value: ',i
-					if len(i)>1:
-						if i not in NewClans:
-							#print 'It is in new clans ', i
-							NewClans.append(i)
-							#print i
-					
-					elif len(i)==1:
-						if type(i[0]) == list:
-							if i[0] not in NewClans:
-								NewClans.append(i[0])
-						elif i[0] not in NewNodes:
-							NewNodes.append(i[0])
+			for i in SplitD.values():
+				#print 'Value: ',i
+				if len(i)>1:
+					if i not in NewClans:
+						#print 'It is in new clans ', i
+						NewClans.append(i)
+						#print i
+				
+				elif len(i)==1:
+					if type(i[0]) == list:
+						if i[0] not in NewClans:
+							NewClans.append(i[0])
+					elif i[0] not in NewNodes:
+						NewNodes.append(i[0])
 		else:
 			for j in clan.nodes:
 				if '[' in str(j):

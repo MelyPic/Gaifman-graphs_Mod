@@ -969,7 +969,7 @@ def ReadFile():
 		elif '.txt' in filename_ext:
 			TxtFile_ValueEqualAttribute(filename_ext,GraphMatrix)
 			#TxtFile_AttributeNameBeforeValue(filename_ext,GraphMatrix)
-			#TxtFile(filename_ext, GraphMatrix)
+			#TxtFile(filename_ext, GraphMatrix)#titanic
             #CsvFile(filename_ext, GraphMatrix)
 			filename = filename_ext.replace('.txt', '')
 		elif '.csv' in filename_ext:
@@ -1068,6 +1068,9 @@ if GraphMatrix != []:
 		MatrixToMATPD(GraphMatrix, MyGraph, int(threshold),int(uthreshold))
 		for i in MyGraph:
 			print (i)
+		sp=input('Would you like to get the shortest path version: (y/n)')
+		if sp=='y':
+			MyGraph = MatrixShortestPaths(MyGraph)		
 	elif '4' in ans:
 		lowerthreshold = input('Give a lower threshold:')
 		upperthreshold = input('Give a upper threshold (0 = not upper threshold):')
@@ -1156,6 +1159,10 @@ if GraphMatrix != []:
 		MatrixPlain(GraphMatrix,MyGraph)
 		for i in MyGraph:
 			print (i)
+		sp=input('Would you like to get the shortest path version: (y/n)')
+		if sp=='y':
+			MyGraph = MatrixShortestPaths(MyGraph)
+		
               
 	
 	
