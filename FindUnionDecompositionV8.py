@@ -1,4 +1,5 @@
 from FromFileToGraph import *
+import time
 
 '''
 Input: str from','to
@@ -377,12 +378,12 @@ como decidir si se compacta o no: se compactara cuando en ese momento se tenga a
 '''
 def Pack(NodeList):
 	
-	#PackFile = open('Pack.txt','w')	
+	PackFile = open('Pack.txt','a')	
 		
 	##print '******Make a clan to:' 
-	#PackFile.write('******Make a clan to:\n')
-	#for k in NodeList:
-		#PackFile.write(str(k)+'\n')
+	PackFile.write('******Make a clan to:\n')
+	for k in NodeList:
+		PackFile.write(str(k)+'\n')
 		##print k
 	if type(NodeList) == list:
 		Edges = []
@@ -407,14 +408,14 @@ def Pack(NodeList):
 	# [23,24], 29 ---[23,24] 29
 	
 	##print '_______elementos de NodeList en:____________'
-	#PackFile.write('_______elementos de NodeList en:____________\n')
-	#for i in Edges:
-	#	PackFile.write(str(i)+', padre: '+str(Find(i))+'\n')
+	PackFile.write('_______elementos de NodeList en:____________\n')
+	for i in Edges:
+		PackFile.write(str(i)+', padre: '+str(Find(i))+'\n')
 		##print str(i), Find(i)
 	
 		i = 0
 		while i < len(Edges):
-			##print 'esta--->',str(Edges[i])	
+			PackFile.write('esta--->'+str(Edges[i])+'\n')	
 			to = Edges[i].EdgeTo()
 			j = i+1
 			pack = True
@@ -424,8 +425,8 @@ def Pack(NodeList):
 			while pack and j<len(Edges):
 				thisto = Edges[j].EdgeTo()
 				if to == thisto:
-					##print 'igual a esta ',Edges[j]
-					##print InitialColor,':::',Find(Edges[j])
+					PackFile.write('igual a esta '+str(Edges[j])+'\n')
+					PackFile.write(str(InitialColor)+':::'+str(Find(Edges[j]))+'\n')
 					if InitialColor == Find(Edges[j]):
 						ine = True
 						count += 1				
@@ -437,12 +438,14 @@ def Pack(NodeList):
 			#Se agregan las aristas que tienen el mismo color que Edges[i] como hijo de Edges[i]		
 			if pack and ine and count == len(NodeList)-1:
 				if EdgeOf(str(NodeList)+','+to) == 'Edge not found':#
+					PackFile.write('New edge: '+str(NodeList)+','+to+'\n')
 					k = Edge(str(NodeList),',',to)#
 					EdgesNodes.append(k)#
 					MakeSet(k)#
 					Union(Edges[i],k)#
 			
-				if EdgeOf(to+','+str(NodeList)) == 'Edge not found':#	
+				if EdgeOf(to+','+str(NodeList)) == 'Edge not found':#
+					PackFile.write('New edge: '+to+','+str(NodeList)+'\n')	
 					l = Edge( to,',',str(NodeList))#
 					EdgesNodes.append(l)#
 					MakeSet(l)#
@@ -464,18 +467,19 @@ def Pack(NodeList):
 				while l< len(Edges):
 					thisto = Edges[l].EdgeTo()
 					if to == thisto:
-						Edges.remove(Edges[l])
+						PackFile.write('Remove: '+str(Edges[l]))
+						Edges.remove(Edges[l])						
 					else:
 						l+=1
 			else:
 				i+=1
 			
-	#PackFile.write('--------Aristas finales----------\n')
+	PackFile.write('--------Aristas finales----------\n')
 	##print '--------Aristas finales----------'		
-	#for i in EdgesNodes:
-	#	PackFile.write(str(i)+', padre: '+str(Find(i))+'\n')
+	for i in EdgesNodes:
+		PackFile.write(str(i)+', padre: '+str(Find(i))+'\n')
 		##print str(i), Find(i)
-	#PackFile.close()
+	PackFile.close()
 
 '''
 Input: Lista de objetos Edge
@@ -585,9 +589,9 @@ Funcion que agrega un nuevo nodo a un clan existente.eje
 '''
 #Hacer Pack cuando se crean nuevos clanes			
 def AddNode(Clan,node): #MyClan Clan, str node
-	print ('Node to add: ',node)
-	print ('Clan nodes (actual tree): ',Clan.nodes)
-	print ('Clan type: ',Clan.clantype)
+	#print ('Node to add: ',node)
+	#print ('Clan nodes (actual tree): ',Clan.nodes)
+	#print ('Clan type: ',Clan.clantype)
 	##print 'Clanes en el clan con tipo'
 	#for i in Clan.clanlist:
 		#print i.nodes, i.clantype
@@ -597,7 +601,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 			Clan.add_node(node)
 			##print 'un nodo habia'
 		else: 
-			##print 'un clan habia'
+			#print ('un clan habia')
 			ActualNode = Clan.nodes[0]
 			for i in ActualNode:
 				Clan.add_node(i)
@@ -611,7 +615,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 		
 		if Clan.clantype=='complete':
 			if len(SameColorAsClan)==len(Clan.nodes):
-				print ('El nodo ve a todos los elementos del mismo color que el color del clan')
+				#print ('El nodo ve a todos los elementos del mismo color que el color del clan')
 				Clan.add_node(node)
 				
 			elif len(SameColorAsClan)!= 0:
@@ -624,8 +628,8 @@ def AddNode(Clan,node): #MyClan Clan, str node
 				ListNodesDiferentColor = []
 				for i in SameColorAsClan:
 					ListNodesSameColor.append(i.EdgeFrom())
-				print ('El nodo ve a algunos elementos del clan del mismo color que el color del clan')
-				print ('los elementos son: ', ListNodesSameColor)
+				#print ('El nodo ve a algunos elementos del clan del mismo color que el color del clan')
+				#print ('los elementos son: ', ListNodesSameColor)
 				#print ListNodesSameColor
 				
 				NodesInClan = Clan.nodes[:]
@@ -633,7 +637,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 					#print i
 					if str(i) not in ListNodesSameColor:
 						ListNodesDiferentColor.append(i)
-				print ('Elementos del clan que no son vistos del mismo color:', ListNodesDiferentColor)
+				#print ('Elementos del clan que no son vistos del mismo color:', ListNodesDiferentColor)
 				
 				if len(ListNodesDiferentColor) == 1 and '[' in str(ListNodesDiferentColor[0]):
 					ClanNotSameColor = Clan.getclanwithnodes(ListNodesDiferentColor[0])
@@ -663,11 +667,11 @@ def AddNode(Clan,node): #MyClan Clan, str node
 				Clan.add_clan(ClanNotSameColor)
 				##print 'clan final', Clan.nodes
 				Pack(ClanNotSameColor.nodes)
-				##print '************************************* compacta a: ', ClanNotSameColor.nodes		
+				#print ('************************************* compacta a: ', ClanNotSameColor.nodes)		
 				Pack(Clan.nodes)
 				
 			elif len(NonVisibleClans)!=0:
-				print ('El nodo no puede ver a ',len(NonVisibleClans) ,' elementos del clan y estos son:', NonVisibleClans)
+				#print ('El nodo no puede ver a ',len(NonVisibleClans) ,' elementos del clan y estos son:', NonVisibleClans)
 				##print 'Nodos del Clan antes del Split: ', Clan.nodes
 				#for i in NonVisibleClans:
 				#	#print 'nodo en NonVisibleClans: ', i
@@ -714,7 +718,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 					VisibleNodes = HCAS[3]
 					for j in NonVisibles_ClanList:
 						if j.clantype == 'complete':
-							print (j.nodes, '*******', j.clantype)
+							#print (j.nodes, '*******', j.clantype)
 							GC = GroupedByColor(VisibleClans, VisibleNodes)
 							if GC!=[]:
 								for clani in GC:
@@ -747,11 +751,11 @@ def AddNode(Clan,node): #MyClan Clan, str node
 				#	Clan.add_clan(NewClan)					
 				#	Pack(NewClan.nodes)
 				#print 'nodos finales: ', Clan.nodes
-				print('el clan ', Clan.nodes ,' es ', Clan.clantype)
+				#print('el clan ', Clan.nodes ,' es ', Clan.clantype)
 				
 			else:
 				if EdgesHaveSameColor(VisibleClans):
-					print ('El nodo ve con el mismo color a todos los elementos del clan, y este color es distintos al color del clan.')
+					#print ('El nodo ve con el mismo color a todos los elementos del clan, y este color es distintos al color del clan.')
 					NodesInVisibleClans =Clan.nodes[:]
 					NewClan = MyClan('complete')
 					for i in NodesInVisibleClans:
@@ -853,12 +857,12 @@ def AddNode(Clan,node): #MyClan Clan, str node
 					S = SplitClan(ClanList,node,S1,S2)
 					##print 'Nuevos nodos', S[1]
 					Clan.add_nodes_from(S1)
-					print ('Nuevos clanes', S2)
+					#print ('Nuevos clanes', S2)
 					for i in S2:
-						print (i)
+						#print (i)
 						if i!=[] and i!=[''] and i!= None:
 							CG = ClanGenerator(i)
-							print (CG)
+							#print (CG)
 							Clan.add_clan(CG)
 							#Clan.add_clan(i)
 							Pack(i)
@@ -1142,11 +1146,14 @@ CCT=ConstructColorTrees(MyGraph,EdgesNodes)
 #]
 
 
+
 ActualClan = MyClan('complete')
 ActualClan.add_node(str(0))
 
+start_time = time.clock()
 for i in range(1,len(MyGraph)):
 	AddNode(ActualClan,str(i))
+print(time.clock() - start_time, "seconds")
 
 print ("compara")
 print (ActualClan.nodes)

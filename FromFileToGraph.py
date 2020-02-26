@@ -60,6 +60,7 @@ def MatrixLinear(Matrix, MyGraph, IntervalSize):
                 if InInterval != 0:
                     LA[i].append(j)
 
+		
 '''
 Generate a exponential matrix MyGraph dividing the original matrix Matrix in intervals of 2^k  
 '''
@@ -967,7 +968,7 @@ def ReadFile():
 			ArffFile(filename_ext, GraphMatrix)
 			filename = filename_ext.replace('.arff', '')
 		elif '.txt' in filename_ext:
-			TxtFile_ValueEqualAttribute(filename_ext,GraphMatrix)
+			TxtFile_ValueEqualAttribute(filename_ext,GraphMatrix)#diagnostic
 			#TxtFile_AttributeNameBeforeValue(filename_ext,GraphMatrix)
 			#TxtFile(filename_ext, GraphMatrix)#titanic
             #CsvFile(filename_ext, GraphMatrix)
@@ -1022,6 +1023,21 @@ elif '2' in opt:
 
 elif '3' in opt:
     NG = ReadNetworkxGraph()
+#GraphMatrix =[[[0],	[2],	[0],	[0],	[0],	[0]],
+#[[2],	[0],	[0],	[17],	[0],	[6]],
+#[[0],	[0],	[0],	[0],	[14],	[5]],
+#[[0],	[17],	[0],	[0],	[0],	[9]],
+#[[0],	[0],	[14],	[0],	[0],	[0]],
+#[[0],	[6],	[5],	[9],	[0],	[0]]]
+
+#GraphMatrix =[[[0],	[0],	[0],	[1],	[0],	[0]],
+#[[0],	[0],	[1],	[0],	[1],	[0]],
+#[[0],	[1],	[0],	[0],	[0],	[1]],
+#[[1],	[0],	[0],	[0],	[0],	[0]],
+#[[0],	[1],	[0],	[0],	[0],	[1]],
+#[[0],	[0],	[1],	[0],	[1],	[0]]]
+#TotalAttributesValues=['a','b','c','d','e','f']
+
 
 if GraphMatrix != []:
 	# Histograma
@@ -1085,7 +1101,9 @@ if GraphMatrix != []:
 			for i in range(len(GraphMatrix)):
 				for j in range(len(GraphMatrix[i])):
 					if i != j and int(GraphMatrix[i][j][0]) > int(upperthreshold):
-						GraphMatrix[i][j][0] = sameclass						
+						GraphMatrix[i][j][0] = sameclass
+		for i in GraphMatrix:
+			print(i)										
 		MatrixLinear(GraphMatrix, MyGraph, IntervalSize)
 		for i in MyGraph:
 			print (i)
