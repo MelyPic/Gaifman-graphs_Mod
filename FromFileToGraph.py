@@ -5,8 +5,36 @@ import matplotlib.pyplot as plt
 import collections
 from math import ceil,log,floor
 import os
+from sklearn.cluster import KMeans
+import numpy as np
+from kmeans_jenks import *
+'''
+To be used for K-means
+'''
+def FromMatrixToArray(Matrix,Array):
+	for i in range(len(Matrix)):
+		for j in range(len(Matrix[i])):
+			Array.append(int(Matrix[i][j][0]))
+			#Array.append([int(Matrix[i][j][0]),j])
 
 
+'''
+To be used for K-means
+'''
+def FromLabelsToMatrix(Labels,MatrixSize):
+	Matrix=[]	
+	array = []
+	j=0
+	i=0
+	while j < len(Labels):
+		while i < MatrixSize:
+			array.append([Labels[j]])
+			i+=1
+			j+=1
+		Matrix.append(array)
+		array=[]
+		i=0
+	return Matrix
 
 '''
 Generate a plain matrix MyGraph, connected and disconnected nodes  
@@ -371,8 +399,11 @@ def TxtFile_ValueEqualAttribute(filename, GraphMatrix):
 	AttributeNameList = []
 	AttributeValueList = []
 	TotalValues = 0
+	numberline=1
 	it = islice(fileop,1,None)
 	for AllLine in it:
+		#print('Numero de linea: '+str(numberline)+'\n')
+		numberline += 1
 		Line = AllLine.split(',')
 		for i in Line:
 			i = i.replace('\n','')
@@ -383,7 +414,8 @@ def TxtFile_ValueEqualAttribute(filename, GraphMatrix):
 					AttributeValueList.append(i)
 					TotalValues += 1
 	fileop.close()
-	#print len(AttributeNameList)
+	print (AttributeNameList)
+	print(TotalValues)
 	#print AttributeValueList
 	for i in range(TotalValues):
 		l = []
@@ -1073,7 +1105,7 @@ if GraphMatrix != []:
 	# for i in LA:
 	#	#print i
 	##print 'Total attributes: ', len(TotalAttributesValues)
-	ans = input('Would you like to apply the decomposition algorithm on: \n 1.Current graph \n 2.Standard Gaifman graph \n 3.Thresholded graph  \n 4.Lineal graph  \n 5.Exponential Gaifman graph \n 6.Shortest path graph \n 7.Quantity of shortest independent paths graph \n  ')
+	ans = input('Would you like to apply the decomposition algorithm on: \n 1.Current graph \n 2.Standard Gaifman graph \n 3.Thresholded graph  \n 4.Lineal graph  \n 5.Exponential Gaifman graph \n 6.Shortest path graph \n 7.Quantity of shortest independent paths graph \n 8.K-means discretization graph ')
 	if '1' in ans:
 		MyGraph = GraphMatrix
 	if '3' in ans:
@@ -1180,6 +1212,29 @@ if GraphMatrix != []:
 		sp=input('Would you like to get the shortest path version: (y/n)')
 		if sp=='y':
 			MyGraph = MatrixShortestPaths(MyGraph)
+	elif '8' in ans:
+		#just to compare with threshold linear/exponential variants
+		lowerthreshold = input('Give a lower threshold:')
+		upperthreshold = input('Give a upper threshold (0 = not upper threshold):')
+		if lowerthreshold != '0':
+			for i in range(len(GraphMatrix)):
+				for j in range(len(GraphMatrix[i])):
+					if i != j and int(GraphMatrix[i][j][0]) <= int(lowerthreshold):
+						GraphMatrix[i][j][0] = '0'
+		if upperthreshold != '0':
+			#sameclass = str(int(upperthreshold) + int(IntervalSize))
+			for i in range(len(GraphMatrix)):
+				for j in range(len(GraphMatrix[i])):
+					if i != j and int(GraphMatrix[i][j][0]) > int(upperthreshold):
+						GraphMatrix[i][j][0] = '0'
+		#end compare
+		array=[]
+		FromMatrixToArray(GraphMatrix,array)
+		#X = np.array(array)		
+		nc=input('Number of clusters:')
+		#kmeans = KMeans(n_clusters=int(nc), random_state=0).fit(X)
+		#MyGraph = FromLabelsToMatrix(kmeans.labels_,len(GraphMatrix))
+		MyGraph = FromLabelsToMatrix(getGVF(array,int(nc)),len(GraphMatrix))
 		
               
 	
@@ -1189,3 +1244,6 @@ print(TotalAttributesValues)
 for i in TotalAttributesValues:
 	print (i)
 
+print ('GRAPH:')
+for i in MyGraph:
+	print(i)

@@ -76,18 +76,21 @@ def MakeCluster(Clan):
 					tlist1 = tlist	
 				ColorEdge = str(Find(EdgeOf(str(flist1)+','+str(tlist1))))
 				Indx= ColorEdge.split(',')
-				if MyGraph[int(Indx[0])][int(Indx[1])][0]== '0':
+				if int(MyGraph[int(Indx[0])][int(Indx[1])][0])== 0:
 					OutputFile.write('n_'+f+' -> n_'+t+' [color=black, style=dashed, arrowhead = none];\n')
-				else:
+				elif Indx[0]!= Indx[1]:
 					#colr = 1  # int(MyGraph[int(Indx[0])][int(Indx[1])])%23
-					if Indx[0]!= Indx[1]:
-						colr = int(MyGraph[int(Indx[0])][int(Indx[1])])%23
-						print('*from to: ', int(Indx[0]), int(Indx[1]),MyGraph[int(Indx[0])][int(Indx[1])])	
+					if type(MyGraph[int(Indx[0])][int(Indx[1])])==list:
+						colr= int(MyGraph[int(Indx[0])][int(Indx[1])][0])%24
+					else:
+						colr = int(MyGraph[int(Indx[0])][int(Indx[1])])%24
+					print('*from to: ', int(Indx[0]), int(Indx[1]),MyGraph[int(Indx[0])][int(Indx[1])])	
 				
-						print('clase: ', MyGraph[int(Indx[0])][int(Indx[1])])
-						print('color: '+ DictColors[colr])
-						OutputFile.write('n_'+f+' -> n_'+t+' [color= '+DictColors[colr]+', arrowhead = none];\n')
-				
+					print('clase: ', MyGraph[int(Indx[0])][int(Indx[1])])
+					print('color: '+ DictColors[colr])
+					OutputFile.write('n_'+f+' -> n_'+t+' [color= '+DictColors[colr]+', arrowhead = none];\n')
+				else:
+					OutputFile.write('n_'+f+' -> n_'+t+' [color=black, arrowhead = none];\n')
 				restnode += 1
 			actnode += 1
 	
@@ -170,8 +173,7 @@ if len(ActualClan.nodes)< 13:
 		while restnode < len(ActualClan.nodes):
 			tlist = ActualClan.nodes[restnode]
 			f = GiveName(flist)
-			t = GiveName(tlist)
-			
+			t = GiveName(tlist)			
 			if type(flist)==list:
 				flist1 = flist[0]
 			else:
@@ -182,17 +184,20 @@ if len(ActualClan.nodes)< 13:
 				tlist1 = tlist	
 			ColorEdge = str(Find(EdgeOf(str(flist1)+','+str(tlist1))))
 			Indx= ColorEdge.split(',')
-			if MyGraph[int(Indx[0])][int(Indx[1])][0] == '0':
+			if int(MyGraph[int(Indx[0])][int(Indx[1])][0]) == 0:
 				OutputFile.write('n_'+f+' -> n_'+t+' [color=black, style=dashed, arrowhead = none];\n')
+			elif Indx[0]!= Indx[1]:
+				if type(MyGraph[int(Indx[0])][int(Indx[1])])==list:
+					colr= int(MyGraph[int(Indx[0])][int(Indx[1])][0])%24
+				else:	
+					colr = int(MyGraph[int(Indx[0])][int(Indx[1])])%24
+							
+				#OutputFile.write('******from to: ', int(Indx[0]),int(Indx[1]))	
+				#OutputFile.write('*******clase: ', MyGraph[int(Indx[0])][int(Indx[1])])
+				#OutputFile.write('*******color '+DictColors[colr])
+				#OutputFile.write('n_'+f+' -> n_'+t+' [color= '+DictColors[colr]+' arrowhead = none];\n')
 			else:
-				#colr = 1  #int(MyGraph[int(Indx[0])][int(Indx[1])])%24
-				colr = int(MyGraph[int(Indx[0])][int(Indx[1])])%24
-				
-				#try:
-				print('**from to: ', int(Indx[0]),int(Indx[1]))	
-				print('clase: ', MyGraph[int(Indx[0])][int(Indx[1])])
-				print('color '+DictColors[colr])
-				OutputFile.write('n_'+f+' -> n_'+t+' [color= '+DictColors[colr]+' arrowhead = none];\n')
+				OutputFile.write('n_'+f+' -> n_'+t+' [color=black, arrowhead = none];\n')
 			restnode += 1
 		actnode += 1
 
@@ -244,6 +249,7 @@ elif len(DCC[0])>5 and len(DCC[1])<5:
 		if '[' in str(i):
 			t = GiveName(i)				
 			OutputFile.write('n_'+f+' -> n_'+t+' [color=white,arrowhead = none];\n')
+	OthersMax = f
 			
 else:# len(DCC[1])<5:
 	if ActualClan.clantype== 'complete':
@@ -300,7 +306,7 @@ if len(ClanList)>=1:
 
 for i in SingletonNodes:
 	fromAttributeValue = TotalAttributesValues[int(i)].replace('.','p')
-	if TotalAttributesValues[int(i)][0].isdigit():
+	if TotalAttributesValues[int(i)][0].isdigit() or '.' in TotalAttributesValues[int(i)][0]:
 		OutputFile.write('n_'+fromAttributeValue +' -> "'+TotalAttributesValues[int(i)]+'" [arrowhead = none];\n')
 	else:
 		OutputFile.write('n_'+fromAttributeValue +' -> '+TotalAttributesValues[int(i)]+' [arrowhead = none];\n') 
