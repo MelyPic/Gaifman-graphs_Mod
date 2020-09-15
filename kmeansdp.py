@@ -27,7 +27,8 @@ def dx1xi(i):
 	if i ==0:
 		return 0
 	else:
-		return dx1xi(i-1)+ ((i-1/i)* pow(x[i]-miu(i-1),2))
+		return dx1xi(i-1)+ gmiu
+		#return dx1xi(i-1)+ ((i-1/i)* pow(x[i]-miu(i-1),2))
 	
 	
 def dxjxi(j,i): #j < i
@@ -40,11 +41,23 @@ def dxjxi(j,i): #j < i
 		return dx1xi(j)- dx1xi(i)
 	
 		
-def miu(i):
-	if i == 0:
-		return 0
-	else:
-		return (x[i]+(i-1)*miu(i-1))/i
+#def miu(i):
+#	if i == 0:
+#		return 0
+#	else:
+#		return (x[i]+(i-1)*miu(i-1))/i
+
+def miu(x):		
+	n= len(x)	
+	sum1=0
+	for i in x:
+		sum1 += (i*i)
+	
+	sum2=0
+	for i in range(n-1):
+		sum2 += (x[i]*x[i+1])
+		
+	return ((n-1)/n) * sum1 - (2/n) * sum2	
 	
 #def Bim(i,m):
 	#arrayD = []
@@ -59,15 +72,22 @@ def miu(i):
 
 x=[]
 B=[]
+gmiu = 0 
 	
 def main():
 	global x
+	global gmiu
+	
 	X = [25, 1 ,20, 1, 10, 10]
 	x = X
 	x.sort()
-	print ('x:',x)
+	print ('x: ',x)
 	
-	k = 2 #clusters
+	gmiu = miu(x)
+	print ('miu: ',gmiu)
+	
+	
+	k = 4 #clusters
 	n = len(x)
 	
 	for r in range(len(x)):
