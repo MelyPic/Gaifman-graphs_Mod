@@ -1013,9 +1013,9 @@ def ReadFile():
 			ArffFile(filename_ext, GraphMatrix)
 			filename = filename_ext.replace('.arff', '')
 		elif '.txt' in filename_ext:
-			#TxtFile_ValueEqualAttribute(filename_ext,GraphMatrix)#diagnostic
+			TxtFile_ValueEqualAttribute(filename_ext,GraphMatrix)#diagnostic
 			#TxtFile_AttributeNameBeforeValue(filename_ext,GraphMatrix)
-			TxtFile(filename_ext, GraphMatrix)#titanic
+			#TxtFile(filename_ext, GraphMatrix)#titanic
             #CsvFile(filename_ext, GraphMatrix)
 			filename = filename_ext.replace('.txt', '')
 		elif '.csv' in filename_ext:
