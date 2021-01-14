@@ -588,7 +588,12 @@ Output:el Clan actualizado.
 Funcion que agrega un nuevo nodo a un clan existente.eje
 '''
 #Hacer Pack cuando se crean nuevos clanes			
-def AddNode(Clan,node): #MyClan Clan, str node
+def AddNode(Clan,node,cct,edgesnodes): #MyClan Clan, str node
+	global CCT
+	global EdgesNodes
+	EdgesNodes = edgesnodes
+	CCT = cct
+	#print ('CCT: ',CCT)
 	#print ('Node to add: ',node)
 	#print ('Clan nodes (actual tree): ',Clan.nodes)
 	#print ('Clan type: ',Clan.clantype)
@@ -606,7 +611,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 			for i in ActualNode:
 				Clan.add_node(i)
 			Clan.remove_node(ActualNode)
-			AddNode(Clan,node)
+			AddNode(Clan,node,CCT,EdgesNodes)
 	else:		
 		HCAS = HowClansAreSeen(Clan,node)
 		SameColorAsClan = HCAS[0]
@@ -659,7 +664,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 				
 				##print Clan.nodes		
 				##print '*********************'
-				AddNode(ClanNotSameColor,node)
+				AddNode(ClanNotSameColor,node,CCT,EdgesNodes)
 				
 				##print ClanNotSameColor.nodes
 				##print '++++++'
@@ -833,7 +838,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 					##print 'buscarlo en: ', Clan.nodes
 					ClanAux = Clan.getclanwithnodes(NonVisibleClans[0])
 					Clan.remove_clan(ClanAux)
-					AddNode(ClanAux,node)#Aqui se hace pack segun donde deba compactarse
+					AddNode(ClanAux,node, CCT,EdgesNodes)#Aqui se hace pack segun donde deba compactarse
 					#Clan.remove_node(NonVisibleClans[0])
 					Clan.add_clan(ClanAux)
 				else:
@@ -906,7 +911,7 @@ def AddNode(Clan,node): #MyClan Clan, str node
 						AuxClan.add_node(CW[1])
 						Clan.remove_node(CW[1])
 					
-					AddNode(AuxClan,node)
+					AddNode(AuxClan,node, CCT,EdgesNodes)
 					Pack(AuxClan.nodes)
 					Clan.add_clan(AuxClan)
 						
@@ -1001,11 +1006,11 @@ def Union(x, y):
          xRoot.rank = xRoot.rank + 1
      
 def Find(x):
-     if x.parent == x:
-        return x
-     else:
-        x.parent = Find(x.parent)
-        return x.parent
+	if x.parent == x:
+		return x
+	else:
+		x.parent = Find(x.parent)
+		return x.parent
 ''''''''''''''''''
 
 def ElementInX(x,ElementsList): #regresa los elementos de ElementsList que tienen raiz x
@@ -1021,6 +1026,7 @@ def ElementInX(x,ElementsList): #regresa los elementos de ElementsList que tiene
 def ConstructColorTrees(ColorMatrix,EdgesNodes):
 	ListColors = []
 	ListParents= []
+	Result =[]
 	for i in range(len(ColorMatrix)):
 		for j in range(len(ColorMatrix[i])):
 			FromTo=str(i)+','+str(j)
@@ -1034,10 +1040,11 @@ def ConstructColorTrees(ColorMatrix,EdgesNodes):
 			else:
 				ListParents.append(n)
 				ListColors.append(ColorMatrix[i][j])
-	
+	Result.append(ListParents)
+	Result.append(ListColors)
 	#for i in ListParents:
 	#	#print ElementInX(i,EdgesNodes) 
-	return ListParents,ListColors
+	return Result #ListParents,ListColors
 #Usa Pack 1
 #MyGraph_1=[['None','black','blue','black','black','black','black'],['black','None','red','black','black','black','black'],['blue','red','None','black','black','black','black'],['black','black','black','None','blue','blue','blue'],['black','black','black','blue','None','black','red'],['black','black','black','blue','black','None','blue'],['black','black','black','blue','red','blue','None']]
 #Usa Split/Pack/ClanWith uno no visible		
@@ -1130,7 +1137,8 @@ def ConstructColorTrees(ColorMatrix,EdgesNodes):
 EdgesNodes tiene objetos Edge, sobre los cuales operan directamente MakeSet, y asi Find y Union
 '''
 EdgesNodes =[]
-CCT=ConstructColorTrees(MyGraph,EdgesNodes)
+CCT=[]#ConstructColorTrees(MyGraph,EdgesNodes)
+
 #MyGraph =[[[0],	[1],	[1],	[1],	[1],	[1],	[1],	[1],	[1],	[0],	[1],	[1]],
 #[[1],	[0],	[1],	[1],	[0],	[0],	[0],	[1],	[0],	[0],	[0],	[0]],
 #[[1],	[1],	[0],	[1],	[0],	[0],	[0],	[1],	[1],	[1],	[0],	[0]],
@@ -1144,19 +1152,6 @@ CCT=ConstructColorTrees(MyGraph,EdgesNodes)
 #[[1],	[0],	[0],	[0],	[1],	[1],	[0],	[0],	[0],	[0],	[0],	[0]],
 #[[1],	[0],	[0],	[0],	[0],	[0],	[0],	[0],	[0],	[0],	[0],	[0]]
 #]
-
-
-
-ActualClan = MyClan('complete')
-ActualClan.add_node(str(0))
-
-start_time = time.clock()
-for i in range(1,len(MyGraph)):
-	AddNode(ActualClan,str(i))
-print(time.clock() - start_time, "seconds")
-
-print ("compara")
-print (ActualClan.nodes)
 
 def ObtainLeaves(SomeClan,LeavesList):
 	for i in SomeClan.nodes:
@@ -1183,6 +1178,61 @@ def ExtractLeaves(SomeClan):
 			#print TotalAttributesValues[int(i)]
 			##print i, 'leaves'
 
+
+#def main(Graph, opt):
+	#global EdgesNodes 
+	#global CCT
+	#if '9' not in opt:
+		#CCT=ConstructColorTrees(Graph,EdgesNodes)
+		#print('Edge nodes size: ', len(EdgesNodes))
+		#ActualClan = MyClan('complete')
+		#ActualClan.add_node(str(0))	
+		#for i in range(1,len(Graph)):
+			#AddNode(ActualClan,str(i))
+		#ExtractLeaves(ActualClan) 
+		#print ("compara")
+		#print (ActualClan.nodes)
+		#Write(ActualClan,'titanicproof',Graph)
+	#else: #Construir los grafos paso a paso
+		#for i in Graph:
+			#print(i)
+		#OpF = open('Increasing1.txt', 'w')	
+		#for i in range(len(CoOccurrenceValues)):
+			#if CoOccurrenceValues[i] != 319  and CoOccurrenceValues[i] != 261 and CoOccurrenceValues[i] != 212:
+				#print('threshold: ',CoOccurrenceValues[i])
+				#OpF.write('threshold: '+str(CoOccurrenceValues[i])+'\n') 
+				#AuxGraph =[]
+				#MatrixToMATPD(Graph, AuxGraph, CoOccurrenceValues[i],0)
+				#for i in AuxGraph:
+					#print(i)
+				#EdgesNodes =[]	
+				#CCT=ConstructColorTrees(AuxGraph,EdgesNodes)
+				#print('Edge nodes size: ', len(EdgesNodes))
+				#ActualClan = MyClan('complete')
+				#ActualClan.add_node(str(0))	
+				#for i in range(1,len(AuxGraph)):
+					#AddNode(ActualClan,str(i))
+				#ExtractLeaves(ActualClan) 
+				#print ("compara")
+				#print (ActualClan.nodes)
+				#Write(ActualClan,'titanic_'+str(CoOccurrenceValues[i]),AuxGraph)
+				#OpF.write(str(ActualClan.nodes)+'\n')	
+		#OpF.close()
 		
+		
+
+#main(MyGraph,ans)
+
+
+		
+	
+#else:
+#	ActualClan = MyClan('complete')
+#	ActualClan.add_node(str(0))	
+#	start_time = time.clock()
+#	for i in range(1,len(MyGraph)):
+#		AddNode(ActualClan,str(i))
+#	print(time.clock() - start_time, "seconds")
+#	ExtractLeaves(ActualClan)
 #print '-------------------------'
-ExtractLeaves(ActualClan)				
+				

@@ -8,6 +8,19 @@ import os
 from sklearn.cluster import KMeans
 import numpy as np
 from kmeans_jenks import *
+
+'''
+List of the integer cooccurrence values
+'''
+def GetCoOccurrenceValues(Matrix):
+	Values=[]
+	for i in range(len(Matrix)):
+		for j in range(i,len(Matrix)):
+			if Matrix[i][j][0] not in Values:
+				Values.append(int(Matrix[i][j][0]))
+	return Values
+			
+
 '''
 To be used for K-means
 '''
@@ -1000,9 +1013,9 @@ def ReadFile():
 			ArffFile(filename_ext, GraphMatrix)
 			filename = filename_ext.replace('.arff', '')
 		elif '.txt' in filename_ext:
-			TxtFile_ValueEqualAttribute(filename_ext,GraphMatrix)#diagnostic
+			#TxtFile_ValueEqualAttribute(filename_ext,GraphMatrix)#diagnostic
 			#TxtFile_AttributeNameBeforeValue(filename_ext,GraphMatrix)
-			#TxtFile(filename_ext, GraphMatrix)#titanic
+			TxtFile(filename_ext, GraphMatrix)#titanic
             #CsvFile(filename_ext, GraphMatrix)
 			filename = filename_ext.replace('.txt', '')
 		elif '.csv' in filename_ext:
@@ -1082,6 +1095,8 @@ if GraphMatrix != []:
 	#OutputFile.write('Matrix: '+str(len(GraphMatrix[0]))+'x'+str(len(GraphMatrix)))
 	for i in GraphMatrix:
 		print (i)
+	
+	CoOccurrenceValues=[]		
 	#	OutputFile.write(str(i) + '\n')
 	#	for j in i:
 	#		if j[0] in quant:
@@ -1105,7 +1120,7 @@ if GraphMatrix != []:
 	# for i in LA:
 	#	#print i
 	##print 'Total attributes: ', len(TotalAttributesValues)
-	ans = input('Would you like to apply the decomposition algorithm on: \n 1.Current graph \n 2.Standard Gaifman graph \n 3.Thresholded graph  \n 4.Lineal graph  \n 5.Exponential Gaifman graph \n 6.Shortest path graph \n 7.Quantity of shortest independent paths graph \n 8.K-means discretization graph ')
+	ans = input('Would you like to apply the decomposition algorithm on: \n 1.Current graph \n 2.Standard Gaifman graph \n 3.Thresholded graph  \n 4.Lineal graph  \n 5.Exponential Gaifman graph \n 6.Shortest path graph \n 7.Quantity of shortest independent paths graph \n 8.K-means discretization graph \n 9.Increasing decomposition \n')
 	if '1' in ans:
 		MyGraph = GraphMatrix
 	if '3' in ans:
@@ -1235,10 +1250,13 @@ if GraphMatrix != []:
 		#kmeans = KMeans(n_clusters=int(nc), random_state=0).fit(X)
 		#MyGraph = FromLabelsToMatrix(kmeans.labels_,len(GraphMatrix))
 		MyGraph = FromLabelsToMatrix(getGVF(array,int(nc)),len(GraphMatrix))
+	elif '9' in ans:
+		CoOccurrenceValues = GetCoOccurrenceValues(GraphMatrix)
+		CoOccurrenceValues.sort(reverse= True)
+		print('Co-occurrence Values: ', CoOccurrenceValues)
+		MyGraph = GraphMatrix
 		
               
-	
-	
 	
 print(TotalAttributesValues)	
 for i in TotalAttributesValues:
@@ -1247,3 +1265,4 @@ for i in TotalAttributesValues:
 print ('GRAPH:')
 for i in MyGraph:
 	print(i)
+	
