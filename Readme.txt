@@ -1,4 +1,4 @@
-1. Execute Gaifman-graphs_Mod.py
+1. Execute OutpDotFile.py
 
 Because the current data in this Github project:
 
